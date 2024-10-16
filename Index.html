@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Text Generation</title>
+  <script defer src="script.js"></script>
+</head>
+<body>
+  <h1>Text Generation with Xenova Transformers</h1>
+  <p>Type a sentence to generate text:</p>
+  <input type="text" id="input-text" placeholder="Enter a sentence">
+  <button onclick="generateText()">Generate Text</button>
+  
+  <h2>Generated Text:</h2>
+  <p id="result"></p>
+  
+  <script>
+    import { pipeline } from '@xenova/transformers';
+
+// Function to generate text
+async function generateText() {
+  const inputText = document.getElementById('input-text').value;
+  const pipe = await pipeline('text-generation');
+  const result = await pipe(inputText);
+
+  document.getElementById('result').innerText = result[0].generated_text;
+}
+  </script>
+  
+</body>
+</html>
