@@ -3,48 +3,321 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Answer Breaker</title>
+    <title>Advanced Math Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            max-width: 600px;
+        }
+        #calculator {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        button {
+            padding: 20px;
+            font-size: 20px;
+            cursor: pointer;
+        }
+        #output {
+            white-space: pre-wrap; /* Preserve whitespace and line breaks */
+        }
+    </style>
 </head>
 <body>
-    <h1>Answer Breaker</h1>
-    <textarea id="textInput" rows="10" cols="50" placeholder="Enter your text here..."></textarea><br>
-    <button id="submitBtn">Break Answer</button>
-    <h2>Output:</h2>
+    <h1>Advanced Math Calculator</h1>
+    <div id="calculator">
+        <!-- Number buttons -->
+        <button onclick="appendNumber('7')">7</button>
+        <button onclick="appendNumber('8')">8</button>
+        <button onclick="appendNumber('9')">9</button>
+        <button onclick="setOperation('/')">Divide (/)</button>
+
+        <button onclick="appendNumber('4')">4</button>
+        <button onclick="appendNumber('5')">5</button>
+        <button onclick="appendNumber('6')">6</button>
+        <button onclick="setOperation('*')">Multiply (×)</button>
+
+        <button onclick="appendNumber('1')">1</button>
+        <button onclick="appendNumber('2')">2</button>
+        <button onclick="appendNumber('3')">3</button>
+        <button onclick="setOperation('-')">Subtract (-)</button>
+
+        <button onclick="appendNumber('0')">0</button>
+        <button onclick="calculate()">Calculate (=)</button>
+        <button onclick="clearCalculator()">Clear (C)</button>
+        <button onclick="setOperation('+')">Add (+)</button>
+
+        <!-- Additional operations -->
+        <button onclick="setOperation('power')">x^y</button>
+        <button onclick="setOperation('sqrt')">Square Root (√)</button>
+        <button onclick="setOperation('cube')">Cube (x^3)</button>
+        <button onclick="setOperation('square')">Square (x^2)</button>
+
+        <button onclick="setOperation('sin')">Sine (sin(x))</button>
+        <button onclick="setOperation('cos')">Cosine (cos(x))</button>
+        <button onclick="setOperation('tan')">Tangent (tan(x))</button>
+        <button onclick="setOperation('log')">Natural Logarithm (log(x))</button>
+
+        <button onclick="setOperation('exp')">Exponential (e^x)</button>
+        <button onclick="setOperation('factorial')">Factorial (x!)</button>
+        <button onclick="setOperation('abs')">Absolute Value (|x|)</button>
+        <button onclick="setOperation('mod')">Modulo (x mod y)</button>
+
+        <button onclick="setOperation('min')">Minimum (min(x, y))</button>
+        <button onclick="setOperation('max')">Maximum (max(x, y))</button>
+        <button onclick="setOperation('avg')">Average (avg(x, y))</button>
+        <button onclick="setOperation('median')">Median</button>
+
+        <button onclick="setOperation('sum')">Sum (Σ)</button>
+        <button onclick="setOperation('stddev')">Standard Deviation</button>
+        <button onclick="setOperation('variance')">Variance</button>
+        <button onclick="setOperation('percentage')">Percentage (x%)</button>
+
+        <button onclick="setOperation('sinh')">Hyperbolic Sine (sinh(x))</button>
+        <button onclick="setOperation('cosh')">Hyperbolic Cosine (cosh(x))</button>
+        <button onclick="setOperation('tanh')">Hyperbolic Tangent (tanh(x))</button>
+        <button onclick="setOperation('asin')">Inverse Sine (asin(x))</button>
+
+        <button onclick="setOperation('acos')">Inverse Cosine (acos(x))</button>
+        <button onclick="setOperation('atan')">Inverse Tangent (atan(x))</button>
+        <button onclick="setOperation('floor')">Floor (⌊x⌋)</button>
+        <button onclick="setOperation('ceil')">Ceiling (⌈x⌉)</button>
+
+        <button onclick="setOperation('round')">Round</button>
+        <button onclick="setOperation('pi')">Pi (π)</button>
+        <button onclick="setOperation('log10')">Log Base 10</button>
+        <button onclick="setOperation('log2')">Log Base 2</button>
+    </div>
+    <h2>Calculation Steps:</h2>
     <pre id="output"></pre>
 
-    <script> 
-    document.getElementById('submitBtn').addEventListener('click', async function() {
-    const userInput = document.getElementById('textInput').value;
-    
-    if (!userInput) {
-        alert('Please enter some text.');
-        return;
+    <script">
+    let currentInput = '';
+let operation = '';
+let firstNumber = null;
+
+function appendNumber(number) {
+    currentInput += number; // Append the clicked number to the input
+    document.getElementById('output').innerText = currentInput; // Display current input
+}
+
+function setOperation(op) {
+    if (currentInput === '') return; // Prevent setting operation if input is empty
+    firstNumber = parseFloat(currentInput); // Store the first number
+    operation = op; // Set the operation
+    currentInput = ''; // Clear current input for next number
+}
+
+function clearCalculator() {
+    currentInput = '';
+    operation = '';
+    firstNumber = null;
+    document.getElementById('output').innerText = ''; // Clear output
+}
+
+function calculate() {
+    if (currentInput === '' && operation !== 'sqrt' && operation !== 'sin' && operation !== 'cos' && operation !== 'tan' && operation !== 'log' && operation !== 'exp' && operation !== 'factorial' && operation !== 'abs' && operation !== 'sinh' && operation !== 'cosh' && operation !== 'tanh') {
+        return; // Validate inputs
     }
-    
-    const resp = await fetch('https://api.deepai.org/api/text2img', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'api-key': '7dd104e4-528f-4692-a299-31532d00954f'  // Replace with your actual API key
-        },
-        body: JSON.stringify({
-            text: userInput,  // Send the user input to the API
-        })
-    });
 
-    if (!resp.ok) {
-        const error = await resp.json();
-        console.error('Error:', error);
-        document.getElementById('output').innerText = 'Error: ' + error.message;
-        return;
+    const secondNumber = operation !== 'sqrt' && operation !== 'sin' && operation !== 'cos' && operation !== 'tan' && operation !== 'log' && operation !== 'exp' && operation !== 'factorial' && operation !== 'abs' && operation !== 'sinh' && operation !== 'cosh' && operation !== 'tanh' ? parseFloat(currentInput) : null;
+    let result;
+    let steps = '';
+
+    switch (operation) {
+        case '+':
+            result = firstNumber + secondNumber;
+            steps = `${firstNumber} + ${secondNumber} = ${result}`;
+            break;
+        case '-':
+            result = firstNumber - secondNumber;
+            steps = `${firstNumber} - ${secondNumber} = ${result}`;
+            break;
+        case '*':
+            result = firstNumber * secondNumber;
+            steps = `${firstNumber} × ${secondNumber} = ${result}`;
+            break;
+        case '/':
+            if (secondNumber === 0) {
+                steps = 'Error: Division by zero is not allowed.';
+                result = '';
+            } else {
+                result = firstNumber / secondNumber;
+                steps = `${firstNumber} ÷ ${secondNumber} = ${result}`;
+            }
+            break;
+        case 'power':
+            result = Math.pow(firstNumber, secondNumber);
+            steps = `${firstNumber} ^ ${secondNumber} = ${result}`;
+            break;
+        case 'sqrt':
+            result = Math.sqrt(firstNumber);
+            steps = `√${firstNumber} = ${result}`;
+            break;
+        case 'cube':
+            result = Math.pow(firstNumber, 3);
+            steps = `${firstNumber} ^ 3 = ${result}`;
+            break;
+        case 'square':
+            result = Math.pow(firstNumber, 2);
+            steps = `${firstNumber} ^ 2 = ${result}`;
+            break;
+        case 'sin':
+            result = Math.sin(firstNumber);
+            steps = `sin(${firstNumber}) = ${result}`;
+            break;
+        case 'cos':
+            result = Math.cos(firstNumber);
+            steps = `cos(${firstNumber}) = ${result}`;
+            break;
+        case 'tan':
+            result = Math.tan(firstNumber);
+            steps = `tan(${firstNumber}) = ${result}`;
+            break;
+        case 'log':
+            result = Math.log(firstNumber);
+            steps = `log(${firstNumber}) = ${result}`;
+            break;
+        case 'exp':
+            result = Math.exp(firstNumber);
+            steps = `e ^ ${firstNumber} = ${result}`;
+            break;
+        case 'factorial':
+            result = factorial(firstNumber);
+            steps = `${firstNumber}! = ${result}`;
+            break;
+        case 'abs':
+            result = Math.abs(firstNumber);
+            steps = `|${firstNumber}| = ${result}`;
+            break;
+        case 'mod':
+            result = firstNumber % secondNumber;
+            steps = `${firstNumber} mod ${secondNumber} = ${result}`;
+            break;
+        case 'min':
+            result = Math.min(firstNumber, secondNumber);
+            steps = `min(${firstNumber}, ${secondNumber}) = ${result}`;
+            break;
+        case 'max':
+            result = Math.max(firstNumber, secondNumber);
+            steps = `max(${firstNumber}, ${secondNumber}) = ${result}`;
+            break;
+        case 'avg':
+            result = (firstNumber + secondNumber) / 2;
+            steps = `Average of ${firstNumber} and ${secondNumber} = ${result}`;
+            break;
+        case 'median':
+            result = median([firstNumber, secondNumber]);
+            steps = `Median of ${firstNumber} and ${secondNumber} = ${result}`;
+            break;
+        case 'sum':
+            result = firstNumber + secondNumber; // Sum
+            steps = `Sum of ${firstNumber} and ${secondNumber} = ${result}`;
+            break;
+        case 'stddev':
+            result = standardDeviation([firstNumber, secondNumber]);
+            steps = `Standard Deviation of ${firstNumber} and ${secondNumber} = ${result}`;
+            break;
+        case 'variance':
+            result = variance([firstNumber, secondNumber]);
+            steps = `Variance of ${firstNumber} and ${secondNumber} = ${result}`;
+            break;
+        case 'percentage':
+            result = (firstNumber * secondNumber) / 100;
+            steps = `${secondNumber}% of ${firstNumber} = ${result}`;
+            break;
+        case 'sinh':
+            result = Math.sinh(firstNumber);
+            steps = `sinh(${firstNumber}) = ${result}`;
+            break;
+        case 'cosh':
+            result = Math.cosh(firstNumber);
+            steps = `cosh(${firstNumber}) = ${result}`;
+            break;
+        case 'tanh':
+            result = Math.tanh(firstNumber);
+            steps = `tanh(${firstNumber}) = ${result}`;
+            break;
+        case 'asin':
+            result = Math.asin(firstNumber);
+            steps = `asin(${firstNumber}) = ${result}`;
+            break;
+        case 'acos':
+            result = Math.acos(firstNumber);
+            steps = `acos(${firstNumber}) = ${result}`;
+            break;
+        case 'atan':
+            result = Math.atan(firstNumber);
+            steps = `atan(${firstNumber}) = ${result}`;
+            break;
+        case 'floor':
+            result = Math.floor(firstNumber);
+            steps = `Floor of ${firstNumber} = ${result}`;
+            break;
+        case 'ceil':
+            result = Math.ceil(firstNumber);
+            steps = `Ceiling of ${firstNumber} = ${result}`;
+            break;
+        case 'round':
+            result = Math.round(firstNumber);
+            steps = `Round of ${firstNumber} = ${result}`;
+            break;
+        case 'pi':
+            result = Math.PI;
+            steps = `π = ${result}`;
+            break;
+        case 'log10':
+            result = Math.log10(firstNumber);
+            steps = `Log base 10 of ${firstNumber} = ${result}`;
+            break;
+        case 'log2':
+            result = Math.log2(firstNumber);
+            steps = `Log base 2 of ${firstNumber} = ${result}`;
+            break;
+        default:
+            steps = 'Invalid operation.';
+            result = '';
+            break;
     }
 
-    const data = await resp.json();
-    console.log(data);
+    // Display the result and detailed steps
+    document.getElementById('output').innerText = steps;
+    clearCalculator(); // Clear inputs after calculation
+}
 
-    // Display the result (You might want to format this depending on what DeepAI returns)
-    document.getElementById('output').innerText = JSON.stringify(data, null, 2);
-});
+// Helper function to calculate factorial
+function factorial(n) {
+    if (n < 0) return 'Undefined';
+    if (n === 0 || n === 1) return 1;
+    let result = 1;
+    for (let i = 2; i <= n; i++) {
+        result *= i;
+    }
+    return result;
+}
+
+// Helper function to calculate the median
+function median(numbers) {
+    numbers.sort((a, b) => a - b);
+    const mid = Math.floor(numbers.length / 2);
+    return numbers.length % 2 === 0 ? (numbers[mid - 1] + numbers[mid]) / 2 : numbers[mid];
+}
+
+// Helper function to calculate standard deviation
+function standardDeviation(numbers) {
+    const mean = numbers.reduce((a, b) => a + b, 0) / numbers.length;
+    const variance = numbers.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / numbers.length;
+    return Math.sqrt(variance);
+}
+
+// Helper function to calculate variance
+function variance(numbers) {
+    const mean = numbers.reduce((a, b) => a + b, 0) / numbers.length;
+    return numbers.reduce((acc, val) => acc + Math.pow(val - mean, 2), 0) / numbers.length;
+                     }
     </script>
 </body>
 </html>
