@@ -1,32 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Text Generation</title>
-  <script defer src="script.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Answer Breaker</title>
 </head>
 <body>
-  <h1>Text Generation with Xenova Transformers</h1>
-  <p>Type a sentence to generate text:</p>
-  <input type="text" id="input-text" placeholder="Enter a sentence">
-  <button onclick="generateText()">Generate Text</button>
-  
-  <h2>Generated Text:</h2>
-  <p id="result"></p>
-  
-  <script>
-    import { pipeline } from '@xenova/transformers';
+    <h1>Answer Breaker</h1>
+    <textarea id="textInput" rows="10" cols="50" placeholder="Enter your text here..."></textarea><br>
+    <button id="submitBtn">Break Answer</button>
+    <h2>Output:</h2>
+    <pre id="output"></pre>
 
-// Function to generate text
-async function generateText() {
-  const inputText = document.getElementById('input-text').value;
-  const pipe = await pipeline('text-generation');
-  const result = await pipe(inputText);
+    <script> 
+    document.getElementById('submitBtn').addEventListener('click', async function() {
+    const userInput = document.getElementById('textInput').value;
+    
+    if (!userInput) {
+        alert('Please enter some text.');
+        return;
+    }
+    
+    const resp = await fetch('https://api.deepai.org/api/text2img', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'api-key': '7dd104e4-528f-4692-a299-31532d00954f'  // Replace with your actual API key
+        },
+        body: JSON.stringify({
+            text: userInput,  // Send the user input to the API
+        })
+    });
 
-  document.getElementById('result').innerText = result[0].generated_text;
-}
-  </script>
-  
+    if (!resp.ok) {
+        const error = await resp.json();
+        console.error('Error:', error);
+        document.getElementById('output').innerText = 'Error: ' + error.message;
+        return;
+    }
+
+    const data = await resp.json();
+    console.log(data);
+
+    // Display the result (You might want to format this depending on what DeepAI returns)
+    document.getElementById('output').innerText = JSON.stringify(data, null, 2);
+});
+    </script>
 </body>
 </html>
